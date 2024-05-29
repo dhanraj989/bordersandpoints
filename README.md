@@ -20,7 +20,7 @@ pip install "dist/bordersandpoints-1.1.0-py3-none-any.whl"
 **Image containing usage of the library:**
 ![bordersandpoints drawio](https://github.com/dhanraj989/bordersandpoints/assets/75594686/6037b10c-2afe-4976-834f-dfe0aaecba02)  
 
-**Information related to functions in the library**
+**Information related to functions in the library:**
 * After importing the library, there are three functions border_lines_cap,create_video,process_video:
 * process_video(video_file,video_path,output_path,initial_point): This function uses farneback algorithm and outputs a video tracking point which is continuously present in a 2D tree trunk video.
   video_file: list containing name of the files in the folder
@@ -39,5 +39,7 @@ Steps to be followed to add border lines and tracking a point which is continuou
 * First use the process_video function and get the video with point tracked
 * Then use border_lines_cap function with output video file from process_function as input
 * Lastly, use create_video function to get video from the video frames output from border_lines_cap function
+
+
 **Example usage:**  
 * An example usage ipynb file is attached in ./usage_example folder to get video with border lines and tracking a point which is continuously present in a 2D tree trunk video
