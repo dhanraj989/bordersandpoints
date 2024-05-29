@@ -44,3 +44,4 @@ pip install "dist/bordersandpoints-1.1.0-py3-none-any.whl"
 
 **Example usage:**
 * An example usage ipynb file is attached in ./usage_example folder to get video with border lines and tracking a point which is continuously present in a 2D tree trunk video
+* I have used Kaggle GPU, but if anyone wants to run on their system then linux subsystem is required for windows users
