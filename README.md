@@ -36,7 +36,7 @@ pip install "dist/bordersandpoints-1.1.0-py3-none-any.whl"
   output_file_path: path in which output file to be stored
 
 
-**Steps to be followed to add border lines and tracking a point which is continuously present in a 2D tree trunk video**
+**Steps to be followed to add border lines and tracking a point which is continuously present in a 2D tree trunk video:**  
 Steps to be followed to add border lines and tracking a point which is continuously present in a 2D tree trunk video:
 * First use the process_video function and get the video with point tracked
 * Then use border_lines_cap function with output video file from process_function as input
