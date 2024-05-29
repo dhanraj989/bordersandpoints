@@ -43,5 +43,5 @@ Steps to be followed to add border lines and tracking a point which is continuou
 * Lastly, use create_video function to get video from the video frames output from border_lines_cap function
 
 
-**Example usage:**  
+**Example usage:**
 * An example usage ipynb file is attached in ./usage_example folder to get video with border lines and tracking a point which is continuously present in a 2D tree trunk video
