@@ -63,3 +63,22 @@ pip install "dist/bordersandpoints-1.1.0-py3-none-any.whl"
 ----
 * An example usage ipynb file is attached in ./usage_example folder to get video with border lines and tracking a point which is continuously present in a 2D tree trunk video
 * I have used Kaggle GPU, but if anyone wants to run on their system then linux subsystem is required for windows users
+
+----
+
+----
+**Example Input and Output**
+
+----
+Here is an example input video converted to GIF:
+![Untitled video - Made with Clipchamp (1)](https://github.com/dhanraj989/bordersandpoints/assets/75594686/d1706be6-71a8-47e3-893a-8fdce289164d)
+
+Corresponding output video converted to GIF:
+![Untitled video - Made with Clipchamp](https://github.com/dhanraj989/bordersandpoints/assets/75594686/bf4a157f-d700-463a-ae63-469e80c07a3c)
+
+----
+**Files in this repository**
+
+----
+* usage_example folder: Contains an ipynb file which has example usage of the library. This folder also contains the input video file used in the ipynb file and the final output video obtained after running the ipynb file
+* bordersandpoints folder: This folder contains 'border_lines.py' python file which has functions contained in the bordersandpoints library
