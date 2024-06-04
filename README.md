@@ -70,10 +70,10 @@ pip install "dist/bordersandpoints-1.1.0-py3-none-any.whl"
 **Example Input and Output**
 
 ----
-Here is an example input video converted to GIF:
+Here is an example input video converted to GIF:  
 ![Untitled video - Made with Clipchamp (1)](https://github.com/dhanraj989/bordersandpoints/assets/75594686/d1706be6-71a8-47e3-893a-8fdce289164d)
 
-Corresponding output video converted to GIF:
+Corresponding output video converted to GIF:  
 ![Untitled video - Made with Clipchamp](https://github.com/dhanraj989/bordersandpoints/assets/75594686/bf4a157f-d700-463a-ae63-469e80c07a3c)
 
 ----
