@@ -26,6 +26,8 @@ pip install "dist/bordersandpoints-1.1.0-py3-none-any.whl"
 ```
 ----
 **Image containing usage of the library:**
+
+----
 ![bordersandpoints drawio](https://github.com/dhanraj989/bordersandpoints/assets/75594686/6037b10c-2afe-4976-834f-dfe0aaecba02)  
 
 ----
