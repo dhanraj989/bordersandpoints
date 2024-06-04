@@ -67,140 +67,137 @@ def process_video(video_files, video_path, output_path, initial_point=(500, 600)
         cap.release()
         out.release()
 
-def get_angle(matrix):
-    x = np.array(np.where(matrix > 0)).T
-    pca = PCA(n_components=2).fit(x)
-    angles = np.arctan2(pca.components_[:,1], pca.components_[:,0])
-    angles = np.rad2deg(angles)
-    angles = np.mod(angles, 180)
-    if abs(90 - angles[0]) < 30:
-        angle = angles[0]
+def get_angle(input_matrix):
+    coordinate_array = np.array(np.where(input_matrix > 0)).T
+    pca_analysis = PCA(n_components=2).fit(coordinate_array)
+    angle_values = np.arctan2(pca_analysis.components_[:,1], pca_analysis.components_[:,0])
+    angle_values = np.rad2deg(angle_values)
+    angle_values = np.mod(angle_values, 180)
+    if abs(90 - angle_values[0]) < 30:
+        chosen_angle = angle_values[0]
     else:
-        angle = angles[1]
-    return 90 - angle
+        chosen_angle = angle_values[1]
+    return 90 - chosen_angle
 
-def slope_and_intercept(line):
-    x1, y1, x2, y2 = line
-    slope = (x2 - x1) / (y2 - y1)
-    intercept = x1 - (slope * y1)
-    return slope, intercept
+def slope_and_intercept(input_line):
+    point1_x, point1_y, point2_x, point2_y = input_line
+    calculated_slope = (point2_x - point1_x) / (point2_y - point1_y)
+    calculated_intercept = point1_x - (calculated_slope * point1_y)
+    return calculated_slope, calculated_intercept
 
-def line_getter(slope, intercept, SHAPE):
-    new_x1 = int(intercept)
-    new_y1 = 0
-    new_x2 = int(slope * SHAPE[0] + intercept)
-    new_y2 = SHAPE[0]
-    return new_x1, new_y1, new_x2, new_y2
+def line_getter(input_slope, input_intercept, input_shape):
+    coordinate_x1 = int(input_intercept)
+    coordinate_y1 = 0
+    coordinate_x2 = int(input_slope * input_shape[0] + input_intercept)
+    coordinate_y2 = input_shape[0]
+    return coordinate_x1, coordinate_y1, coordinate_x2, coordinate_y2
 
-def boundry_locator(res,pca_angle):
-    SHAPE = res.shape
-    PERCENT_INLIERS_HIGH = 0.60
-    PERCENT_INLIERS_LOW = 0.50
-    depth_filtered_mask = (res > 0) * 1
-    depth_filtered_mask_rotated = rotate(depth_filtered_mask * 1, pca_angle, reshape=False)
-    img = depth_filtered_mask_rotated
-    first_row = 0
-    last_row = 0
-    for i in range(img.shape[0]):
-        col = img[i,:]
-        if np.any(col):
-            first_row = i
+def boundry_locator(input_res, input_pca_angle):
+    shape_dimensions = input_res.shape
+    high_percent_inliers = 0.60
+    low_percent_inliers = 0.50
+    depth_mask_filtered = (input_res > 0) * 1
+    rotated_depth_mask_filtered = rotate(depth_mask_filtered * 1, input_pca_angle, reshape=False)
+    image = rotated_depth_mask_filtered
+    initial_row = 0
+    final_row = 0
+    for i in range(image.shape[0]):
+        column = image[i,:]
+        if np.any(column):
+            initial_row = i
             break
-    for i in range(img.shape[0]-1, -1, -1):
-        col = img[i,:]
-        if np.any(col):
-            last_row = i
+    for i in range(image.shape[0]-1, -1, -1):
+        column = image[i,:]
+        if np.any(column):
+            final_row = i
             break
    
-    diff = last_row - first_row
-    depth_filtered_mask_rotated = (np.abs(depth_filtered_mask_rotated) > 0.00) * 1
+    difference = final_row - initial_row
+    rotated_depth_mask_filtered = (np.abs(rotated_depth_mask_filtered) > 0.00) * 1
     left_boundary = 0
-    for j in range(SHAPE[1]):
-        counts = np.bincount(depth_filtered_mask_rotated[:, j])
-        if len(counts) < 2:
+    for j in range(shape_dimensions[1]):
+        count_values = np.bincount(rotated_depth_mask_filtered[:, j])
+        if len(count_values) < 2:
             continue
-        if counts[1] / diff > PERCENT_INLIERS_HIGH:
+        if count_values[1] / difference > high_percent_inliers:
             left_boundary = j
             break
     for j in range(left_boundary - 1, -1, -1):
-        counts = np.bincount(depth_filtered_mask_rotated[:, j])
-        if len(counts) < 2:
+        count_values = np.bincount(rotated_depth_mask_filtered[:, j])
+        if len(count_values) < 2:
             continue
-        if counts[1] / diff < PERCENT_INLIERS_LOW:
+        if count_values[1] / difference < low_percent_inliers:
             left_boundary = j + 1
             break
 
 
     right_boundary = 0
-    for j in range(SHAPE[1] - 1, -1, -1):
-        counts = np.bincount(depth_filtered_mask_rotated[:, j])
-        if len(counts) < 2:
+    for j in range(shape_dimensions[1] - 1, -1, -1):
+        count_values = np.bincount(rotated_depth_mask_filtered[:, j])
+        if len(count_values) < 2:
             continue
-        if counts[1] / diff > PERCENT_INLIERS_HIGH:
+        if count_values[1] / difference > high_percent_inliers:
             right_boundary = j
             break
 
-    for j in range(right_boundary, SHAPE[1]):
-        counts = np.bincount(depth_filtered_mask_rotated[:, j])
-        if len(counts) < 2:
+    for j in range(right_boundary, shape_dimensions[1]):
+        count_values = np.bincount(rotated_depth_mask_filtered[:, j])
+        if len(count_values) < 2:
             continue
-        if counts[1] / diff < PERCENT_INLIERS_LOW:
+        if count_values[1] / difference < low_percent_inliers:
             right_boundary = j - 1
             break
     return left_boundary, right_boundary
 
-def canvas_rotated_boundary(left_boundary,right_boundary,pca_angle, SHAPE):
-    
+def canvas_rotated_boundary(input_left_boundary, input_right_boundary, input_pca_angle, input_shape):
+    left_boundary_canvas = np.zeros(input_shape, dtype=np.uint8)
+    right_boundary_canvas = np.zeros(input_shape, dtype=np.uint8)
 
-    canvans_left_boundary = np.zeros(SHAPE, dtype=np.uint8)
-    canvans_right_boundary = np.zeros(SHAPE, dtype=np.uint8)
-   
-    canvans_left_boundary[:,left_boundary] = 255
-    canvans_right_boundary[:,right_boundary] = 255
-    
-    canvans_left_boundary = rotate(canvans_left_boundary * 1, -pca_angle, reshape=False)
-    canvans_right_boundary = rotate(canvans_right_boundary * 1, -pca_angle, reshape=False)
-    
+    left_boundary_canvas[:,input_left_boundary] = 255
+    right_boundary_canvas[:,input_right_boundary] = 255
+
+    rotated_left_boundary_canvas = rotate(left_boundary_canvas * 1, -input_pca_angle, reshape=False)
+    rotated_right_boundary_canvas = rotate(right_boundary_canvas * 1, -input_pca_angle, reshape=False)
 
     left_top_point = (0,0)
     left_bottom_point = (0,0)
-    for i in range(canvans_left_boundary.shape[0]):
-        columns = np.where(canvans_left_boundary[i,:] > 0)[0]
-        if columns.size > 0:
-            left_top_point = (columns[0], i)
+    for i in range(rotated_left_boundary_canvas.shape[0]):
+        column_values = np.where(rotated_left_boundary_canvas[i,:] > 0)[0]
+        if column_values.size > 0:
+            left_top_point = (column_values[0], i)
             break
-    for i in range(canvans_left_boundary.shape[0] - 1, -1, -1):
-        columns = np.where(canvans_left_boundary[i,:] > 0)[0]
-        if columns.size > 0:
-            left_bottom_point = (columns[0], i)
+    for i in range(rotated_left_boundary_canvas.shape[0] - 1, -1, -1):
+        column_values = np.where(rotated_left_boundary_canvas[i,:] > 0)[0]
+        if column_values.size > 0:
+            left_bottom_point = (column_values[0], i)
             break
-    line_left = (left_top_point[0], left_top_point[1], left_bottom_point[0], left_bottom_point[1])
+    left_line = (left_top_point[0], left_top_point[1], left_bottom_point[0], left_bottom_point[1])
 
     right_top_point = (0,0)
     right_bottom_point = (0,0)
-    for i in range(canvans_right_boundary.shape[0]):
-        columns = np.where(canvans_right_boundary[i,:] > 0)[0]
-        if columns.size > 0:
-            right_top_point = (columns[0], i)
+    for i in range(rotated_right_boundary_canvas.shape[0]):
+        column_values = np.where(rotated_right_boundary_canvas[i,:] > 0)[0]
+        if column_values.size > 0:
+            right_top_point = (column_values[0], i)
             break
-    for i in range(canvans_right_boundary.shape[0] - 1, -1, -1):
-        columns = np.where(canvans_right_boundary[i,:] > 0)[0]
-        if columns.size > 0:
-            right_bottom_point = (columns[0], i)
+    for i in range(rotated_right_boundary_canvas.shape[0] - 1, -1, -1):
+        column_values = np.where(rotated_right_boundary_canvas[i,:] > 0)[0]
+        if column_values.size > 0:
+            right_bottom_point = (column_values[0], i)
             break
-    line_right = (right_top_point[0], right_top_point[1], right_bottom_point[0], right_bottom_point[1])
-    
-    slope1, intercept1 = slope_and_intercept(line_left)
-    slope2, intercept2 = slope_and_intercept(line_right)
-    
-    new_x1, new_y1 ,new_x2, new_y2 = line_getter(slope1, intercept1, SHAPE)
-    new_x3, new_y3 ,new_x4, new_y4 = line_getter(slope2, intercept2,SHAPE)
-    
-    canvans_left = np.zeros(SHAPE, dtype=np.uint8)
-    cv2.line(canvans_left, (new_x1, new_y1), (new_x2, new_y2), (255, 255, 255), 2)
-    canvans_right = np.zeros(SHAPE, dtype=np.uint8)
-    cv2.line(canvans_right, (new_x3, new_y3), (new_x4, new_y4), (255, 255, 255), 2)
-    return canvans_left,canvans_right,slope1,intercept1,slope2,intercept2
+    right_line = (right_top_point[0], right_top_point[1], right_bottom_point[0], right_bottom_point[1])
+
+    slope_left, intercept_left = slope_and_intercept(left_line)
+    slope_right, intercept_right = slope_and_intercept(right_line)
+
+    new_x1, new_y1 ,new_x2, new_y2 = line_getter(slope_left, intercept_left, input_shape)
+    new_x3, new_y3 ,new_x4, new_y4 = line_getter(slope_right, intercept_right, input_shape)
+
+    left_canvas = np.zeros(input_shape, dtype=np.uint8)
+    cv2.line(left_canvas, (new_x1, new_y1), (new_x2, new_y2), (255, 255, 255), 2)
+    right_canvas = np.zeros(input_shape, dtype=np.uint8)
+    cv2.line(right_canvas, (new_x3, new_y3), (new_x4, new_y4), (255, 255, 255), 2)
+    return left_canvas, right_canvas, slope_left, intercept_left, slope_right, intercept_right
 
 def borders_to_segmented_images(seg_img,img):
     enh_image = seg_img
