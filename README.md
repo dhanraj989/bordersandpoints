@@ -1,4 +1,3 @@
-This repository helps in adding border lines and tracking a point which is continuously present in a 2D tree trunk video.  
 
 ----
 All the functions in this repository can be imported using can be import using pip: 
