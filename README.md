@@ -65,9 +65,10 @@ pip install "dist/bordersandpoints-1.1.0-py3-none-any.whl"
 
 ----
 
-**Example Input and Output**
+**Results along with Example Input and Output**
 
 ----
+* Procured an average distance between the border lines of 2.36 and RMSE score of 0.53 for detecting continuous point positions
 Here is an example input video converted to GIF:  
 ![Untitled video - Made with Clipchamp (1)](https://github.com/dhanraj989/bordersandpoints/assets/75594686/d1706be6-71a8-47e3-893a-8fdce289164d)
 
